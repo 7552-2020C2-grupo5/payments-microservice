@@ -42,6 +42,7 @@ const getRoom = () => async (id) => {
   console.log(id);
   return rooms[id];
 };
+
 const createIntentBook = ({ config }) => async (web3, day, month, year) => {
   const bookBnb = await getContract(web3, config.contractAddress);
   return bookBnb.intentBook(roomId, day, month, year, { value: toWei(1) }); // TODO Actual
