@@ -1,7 +1,5 @@
 # BookBnB Payments Service
 
-*Todo commit en main será deployado automáticamente en heroku*
-
 Para lanzar el proceso localmente se debe correr `npm start` previamente habiendo configurado en el archivo `src/config.js` las variables necesarias, para desarrollo y pruebas se recomienda usar la red local. Se detalla en el repositorio del smart contract como deployar el Smart Contract, paso necesario para obtener el parámetro contractAddress de la configuración.
 
 Para ejecutar el flujo implementado se debe:
