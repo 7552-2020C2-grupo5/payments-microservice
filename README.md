@@ -1,10 +1,8 @@
-# BookBnB Service
+# BookBnB Payments Service
 
-Este repositorio contiene una implementación en borrador de un servicio que se conecta con el smart contract en https://github.com/taller-de-programacion-2/bookbnb/.
+*Todo commit en main será deployado automáticamente en heroku*
 
-Notar que este repositorio es solo una guía y se deberán implementar buenas practicas(tests, CI/CD, manejo de errores, etc) asi también como la implementación de las otras funcionalidades.
-
-Para lanzar el proceso se debe correr `npm start` previamente habiendo configurado en el archivo `src/config.js` las variables necesarias, para desarrollo y pruebas se recomienda usar la red local. Se detalla en el repositorio del smart contract como deployar el Smart Contract, paso necesario para obtener el parámetro contractAddress de la configuración.
+Para lanzar el proceso localmente se debe correr `npm start` previamente habiendo configurado en el archivo `src/config.js` las variables necesarias, para desarrollo y pruebas se recomienda usar la red local. Se detalla en el repositorio del smart contract como deployar el Smart Contract, paso necesario para obtener el parámetro contractAddress de la configuración.
 
 Para ejecutar el flujo implementado se debe:
 
@@ -14,3 +12,4 @@ Para ejecutar el flujo implementado se debe:
    - Testnet: A traves de una faucet, por ejemplo https://faucet.kovan.network, usando el address obtenido en el punto anterior
 1. Crear una habitación mediante el endpoint /room con el verbo POST para crear una nueva habitación, se devolverá una transactionHash el cual identificará la habitación creada univocamente. Esta habitación quedara en estado pendiente hasta que la transacción sea confirmada por la red.
 1. Para obtener la habitación creada se puede consultar al endpoint /room/:id con el verbo GET donde el :id es el transactionHash devuelto en el punto anterior.
+
