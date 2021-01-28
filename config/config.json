@@ -1,19 +1,17 @@
 {
   "development": {
-    "username": "payments_dev",
-    "password": "password_dev",
-    "database": "database_dev",
+    "username": "bookbnb_payments",
+    "password": "postgres",
+    "database": "payments_dev",
     "host": "localhost",
-    "dialect": "postgres",
-    "operatorsAliases": false
+    "dialect": "postgres"
   },
   "production": {
-    "username": "payments_prod",
-    "password": "password_prod",
-    "database": "database_prod",
+    "username": "bookbnb_payments",
+    "password": "postgres",
+    "database": "payments_prod",
     "host": "localhost",
     "dialect": "postgres",
-    "operatorsAliases": false,
     "use_env_variable": "DATABASE_URL"
   }
 }
