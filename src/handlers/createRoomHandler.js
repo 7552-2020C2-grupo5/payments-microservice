@@ -3,21 +3,21 @@ function schema(config) {
     params: {
       type: 'object',
       properties: {
-        creatorId: {
-          type: 'integer',
+        mnemonic: {
+          type: 'string',
         },
         price: {
           type: 'number',
         },
       },
     },
-    required: ['creatorId', 'price'],
+    required: ['mnemonic', 'price'],
   };
 }
 
 function handler({ contractInteraction, identityService }) {
   return async function (req) {
-    const identity = await identityService.getWeb3WithIdentity(req.body.creatorId);
+    const identity = await identityService.getWeb3WithIdentity(req.body.mnemonic);
     return contractInteraction.createRoom(identity, req.body.price);
   };
 }
