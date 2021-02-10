@@ -5,7 +5,7 @@ const getContract = (web3, address) => {
   return new web3.eth.Contract(BookBnBAbi, address);
 };
 
-const toWei = (number) => {
+const toWei = (number) => { //Eth to wei
   const WEIS_IN_ETHER = BigNumber(10).pow(18);
   return BigNumber(number).times(WEIS_IN_ETHER).toFixed();
 };
