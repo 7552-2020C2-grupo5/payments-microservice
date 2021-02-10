@@ -12,10 +12,6 @@ const toWei = (number) => {
 
 const rooms = {};
 
-const bookingsPerRoom = {};
-
-const intentsPerRoom = {};
-
 const createRoom = ({ config }) => async (web3, price) => {
   const accounts = await web3.eth.getAccounts();
   const bookBnb = await getContract(web3, config.contractAddress);
@@ -45,7 +41,7 @@ const getRoom = () => async (id) => {
 
 const createIntentBook = ({ config }) => async (web3, day, month, year) => {
   const bookBnb = await getContract(web3, config.contractAddress);
-  return bookBnb.intentBook(roomId, day, month, year, { value: toWei(1) }); // TODO Actual
+  return bookBnb.intentBook(roomId, day, month, year, { value: toWei(1) });
 };
 
 const acceptBooking = ({ config }) => async (web3, roomId, booker, day, month, year) => {

@@ -1,26 +1,6 @@
-const getIdentity = require('./handlers/getIdentityHandler');
-const getIdentities = require('./handlers/getIdentitiesHandler');
 const createIdentity = require('./handlers/createIdentityHandler');
 const createRoom = require('./handlers/createRoomHandler');
 const getRoom = require('./handlers/getRoomHandler');
-
-function getIdentityRoute({ services, config }) {
-  return {
-    method: 'GET',
-    url: '/identity/:id',
-    schema: getIdentity.schema(config),
-    handler: getIdentity.handler({ config, ...services }),
-  };
-}
-
-function getIdentitiesRoute({ services, config }) {
-  return {
-    method: 'GET',
-    url: '/identity',
-    schema: getIdentities.schema(config),
-    handler: getIdentities.handler({ config, ...services }),
-  };
-}
 
 function postIdentityRoute({ services, config }) {
   return {
@@ -51,8 +31,6 @@ function getRoomRoute({ services, config }) {
 
 module.exports = [
   postIdentityRoute,
-  getIdentityRoute,
-  getIdentitiesRoute,
   createRoomRoute,
   getRoomRoute,
 ];
