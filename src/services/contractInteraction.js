@@ -10,7 +10,6 @@ const toWei = (number) => { //Eth to wei
   return BigNumber(number).times(WEIS_IN_ETHER).toFixed();
 };
 
-const rooms = {};
 
 const createRoom = ({ config }) => async (web3, price) => {
   const accounts = await web3.eth.getAccounts();
@@ -22,21 +21,12 @@ const createRoom = ({ config }) => async (web3, price) => {
       .on('receipt', (r) => {
         if (r.events.RoomCreated) {
           const { roomId } = r.events.RoomCreated.returnValues;
-          rooms[r.transactionHash] = { ...rooms[r.transactionHash], roomId, status: 'confirmed' };
+          return resolve(roomId)
         }
-      })
-      .on('transactionHash', function (hash) {
-        rooms[hash] = { price: price, owner: accounts[0] };
-        return resolve(hash);
       })
       .on('error', (err) => reject(err));
   });
   return hashPromise;
-};
-
-const getRoom = () => async (id) => {
-  console.log(id);
-  return rooms[id];
 };
 
 const createIntentBook = ({ config }) => async (web3, day, month, year) => {
@@ -59,5 +49,4 @@ module.exports = (dependencies) => ({
   createIntentBook: createIntentBook(dependencies),
   acceptBooking: acceptBooking(dependencies),
   rejectBooking: rejectBooking(dependencies),
-  getRoom: getRoom(dependencies),
 });
