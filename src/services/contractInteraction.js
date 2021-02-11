@@ -21,7 +21,7 @@ const createRoom = ({ config }) => async (web3, price) => {
       .on('receipt', (r) => {
         if (r.events.RoomCreated) {
           const { roomId } = r.events.RoomCreated.returnValues;
-          return resolve(roomId)
+          return resolve({"room_id" : roomId});
         }
       })
       .on('error', (err) => reject(err));
