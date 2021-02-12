@@ -1,6 +1,10 @@
 {
   "name": "bookbnb-service",
   "version": "1.0.0",
+  "engines": {
+    "node": "10.19.0",
+    "npm": "7.5.3"
+  },
   "description": "BookBnB service to interact with the BookBnB Smart Contract",
   "main": "server.js",
   "scripts": {
