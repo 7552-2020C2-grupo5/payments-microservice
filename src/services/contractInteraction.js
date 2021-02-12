@@ -1,5 +1,9 @@
 const BigNumber = require('bignumber.js');
 const BookBnBAbi = require('../../abi/BnBooking').abi;
+const axios = require('axios');
+
+const PUBLICATIONS_ENDPOINT = "https://bookbnb5-publications.herokuapp.com/v1/publications/32/questions";
+
 
 const getContract = (web3, address) => {
   return new web3.eth.Contract(BookBnBAbi, address);
@@ -21,8 +25,22 @@ const createRoom = ({ config }) => async (web3, price) => {
       .on('receipt', (r) => {
         if (r.events.RoomCreated) {
           const { roomId } = r.events.RoomCreated.returnValues;
-          return resolve({"room_id" : roomId});
+          axios
+            .post(PUBLICATIONS_ENDPOINT, { //Deberia ser un patch a un endpoint publications/transaction_hash
+              question: 'Tienen mas de 50 baños?',
+              user_id: 3
+            })
+            .then(res => {
+              console.log(`statusCode: ${res.statusCode}`)
+              console.log(res)
+            })
+            .catch(error => {
+              console.error(error)
+            })
         }
+      })
+      .on('transactionHash', function (hash) {
+        return resolve({"transaction_hash" : hash});
       })
       .on('error', (err) => reject(err));
   });
