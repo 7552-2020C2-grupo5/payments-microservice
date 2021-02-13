@@ -1,6 +1,5 @@
 const createIdentity = require('./handlers/createIdentityHandler');
 const createRoom = require('./handlers/createRoomHandler');
-const sendTransaction = require('./handlers/sendTransactionHandler');
 const getBalance = require('./handlers/getBalanceHandler');
 
 function postIdentityRoute({ services, config }) {
@@ -21,20 +20,11 @@ function createRoomRoute({ services, config }) {
   };
 }
 
-function sendTransactionRoute({ services, config }) {
-  return {
-    method: 'POST',
-    url: '/transaction',
-    schema: sendTransaction.schema(config),
-    handler: sendTransaction.handler({ config, ...services }),
-  };
-}
-
 function getBalanceRoute({ services, config }) {
   return {
-    method: 'GET',
+    method: 'POST',
     url: '/balance',
-    //schema: getBalance.schema(config),
+    schema: getBalance.schema(config),
     handler: getBalance.handler({ config, ...services }),
   };
 }
@@ -42,6 +32,5 @@ function getBalanceRoute({ services, config }) {
 module.exports = [
   postIdentityRoute,
   createRoomRoute,
-  sendTransactionRoute,
   getBalanceRoute
 ];

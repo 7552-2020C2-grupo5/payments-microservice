@@ -9,9 +9,6 @@ function schema(config) {
         price: {
           type: 'number',
         },
-        address: {
-          type: 'string',
-        },
       },
     },
     required: ['mnemonic', 'price', 'address'],
@@ -21,8 +18,6 @@ function schema(config) {
 function handler({ contractInteraction, identityService }) {
   return async function (req) {
     const identity = await identityService.getWeb3WithIdentity(req.body.mnemonic);
-    res = await identityService.getBalance(req.body.address);
-    console.log(identityService.weiToEth(res));
     return contractInteraction.createRoom(identity, req.body.price);
   };
 }

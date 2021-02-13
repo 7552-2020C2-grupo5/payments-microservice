@@ -1,6 +1,6 @@
 function schema(config) {
   return {
-    body: {
+    params: {
       type: 'object',
       properties: {
         address: {
@@ -12,15 +12,10 @@ function schema(config) {
   };
 }
 
-function handler({ identityService }) {
+function handler({ contractInteraction, identityService }) {
   return async function (req) {
-    process.stdout.write('\n');
-    process.stdout.write('\n');
-    process.stdout.write(req.param('address') + '\n');
-    process.stdout.write('\n');
-    process.stdout.write('\n');
-    const res = await identityService.getBalance(req.body.address);
-    return {"ethers": res};
+    res = await identityService.getBalance(req.body.address);
+    return {"eth" : identityService.weiToEth(res)};
   };
 }
 
