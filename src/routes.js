@@ -1,5 +1,6 @@
 const createIdentity = require('./handlers/createIdentityHandler');
 const createRoom = require('./handlers/createRoomHandler');
+const getBalance = require('./handlers/getBalanceHandler');
 
 function postIdentityRoute({ services, config }) {
   return {
@@ -19,7 +20,17 @@ function createRoomRoute({ services, config }) {
   };
 }
 
+function getBalanceRoute({ services, config }) {
+  return {
+    method: 'POST',
+    url: '/balance',
+    schema: getBalance.schema(config),
+    handler: getBalance.handler({ config, ...services }),
+  };
+}
+
 module.exports = [
   postIdentityRoute,
   createRoomRoute,
+  getBalanceRoute
 ];

@@ -3,22 +3,19 @@ function schema(config) {
     params: {
       type: 'object',
       properties: {
-        mnemonic: {
+        address: {
           type: 'string',
-        },
-        price: {
-          type: 'number',
         },
       },
     },
-    required: ['mnemonic', 'price', 'address'],
+    required: ['address'],
   };
 }
 
 function handler({ contractInteraction, identityService }) {
   return async function (req) {
-    const identity = await identityService.getWeb3WithIdentity(req.body.mnemonic);
-    return contractInteraction.createRoom(identity, req.body.price);
+    res = await identityService.getBalance(req.body.address);
+    return {"eth" : identityService.weiToEth(res)};
   };
 }
 

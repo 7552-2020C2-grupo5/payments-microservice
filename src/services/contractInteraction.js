@@ -24,7 +24,7 @@ const createRoom = ({ config }) => async (web3, price) => {
       .send({ from: accounts[0] })
       .on('receipt', (r) => {
         if (r.events.RoomCreated) {
-          const { roomId } = r.events.RoomCreated.returnValues;
+          const { roomId } = r.events.RoomCreated.returnValues; //To get transaction hash: r.transactionHash
           axios
             .post(PUBLICATIONS_ENDPOINT, { //Deberia ser un patch a un endpoint publications/transaction_hash
               question: 'Tienen mas de 50 baños?',
