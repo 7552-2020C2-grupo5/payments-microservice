@@ -1,14 +1,6 @@
 function schema(config) {
   return {
-    params: {
-      type: 'object',
-      properties: {
-        id: {
-          type: 'integer',
-        },
-      },
-    },
-    required: ['id'],
+    params: {}
   };
 }
 
