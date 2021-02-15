@@ -2,7 +2,7 @@ const BigNumber = require('bignumber.js');
 const BookBnBAbi = require('../../abi/BnBooking').abi;
 const axios = require('axios');
 
-const PUBLICATIONS_ENDPOINT = "https://bookbnb5-publications.herokuapp.com/v1/publications/32/questions";
+const PUBLICATIONS_ENDPOINT = "https://bookbnb5-publications.herokuapp.com/v1/publications";
 
 
 const getContract = (web3, address) => {
@@ -23,19 +23,31 @@ const createRoom = ({ config }) => async (web3, price) => {
       .createRoom(toWei(price))
       .send({ from: accounts[0] })
       .on('receipt', (r) => {
+
+        //sleep(18000) // wait enough time until room is created on publications microservice
+
         if (r.events.RoomCreated) {
-          const { roomId } = r.events.RoomCreated.returnValues; //To get transaction hash: r.transactionHash
-          axios
-            .post(PUBLICATIONS_ENDPOINT, { //Deberia ser un patch a un endpoint publications/transaction_hash
-              question: 'Tienen mas de 50 baños?',
-              user_id: 3
+          const { roomId } = r.events.RoomCreated.returnValues;
+          axios.
+            get(PUBLICATIONS_ENDPOINT, {
+              params: {
+                blockchain_transaction_hash: r.transactionHash
+              }
             })
-            .then(res => {
-              console.log(`statusCode: ${res.statusCode}`)
-              console.log(res)
+            .then(function (response) {
+              const id = response.data[0].id;
+              axios.
+                patch(PUBLICATIONS_ENDPOINT + '/' + id.toString(), { 
+                  blockchain_id: parseInt(roomId, 10),
+                  blockchain_status: "CONFIRMED"
+                })
+                .catch(function (error) {
+                  console.log(error);
+                })
+
             })
-            .catch(error => {
-              console.error(error)
+            .catch(function (error) {
+              console.log(error);
             })
         }
       })
@@ -47,24 +59,44 @@ const createRoom = ({ config }) => async (web3, price) => {
   return hashPromise;
 };
 
-const createIntentBook = ({ config }) => async (web3, day, month, year) => {
+const totalDaysBetween = (initialDate, finalDate) => {
+  const totalTime = finalDate.getTime() - initialDate.getTime();
+  return Math.ceil(totalTime / 86400000) + 1;
+}
+
+const createIntentBook = ({ config }) => async (web3, blockchainId, price, initialDate, finalDate) => {
   const bookBnb = await getContract(web3, config.contractAddress);
-  return bookBnb.intentBook(roomId, day, month, year, { value: toWei(1) });
+  const wallet = await web3.eth.getAccounts();
+
+  const totalDays = totalDaysBetween(initialDate, finalDate) + 1;
+  const totalPrice = price * totalDays;
+
+  return new Promise((resolve, reject) => {
+    bookbnbContract['methods'].intentBookingBatch(
+      roomId,
+      initialDate.getDate(),
+      initialDate.getMonth(),
+      initialDate.getFullYear(),
+      finalDate.getDate(),
+      finalDate.getMonth(),
+      finalDate.getFullYear()
+    )
+    .send({
+      from: wallet[0],
+      value: toWei(totalPrice)
+    })
+    .on('transactionHash', (hash) => {
+      //todo
+    })
+    .on('receipt', (r) => {
+      //todo
+    })
+    .on('error', (err) => reject(err));
+  });
 };
 
-const acceptBooking = ({ config }) => async (web3, roomId, booker, day, month, year) => {
-  const bookBnb = await getContract(web3, config.contractAddress);
-  return bookBnb.accept(roomId, booker, day, month, year);
-};
-
-const rejectBooking = ({ config }) => async (web3, roomId, booker, day, month, year) => {
-  const bookBnb = await getContract(web3, config.contractAddress);
-  return bookBnb.reject(roomId, booker, day, month, year);
-};
 
 module.exports = (dependencies) => ({
   createRoom: createRoom(dependencies),
   createIntentBook: createIntentBook(dependencies),
-  acceptBooking: acceptBooking(dependencies),
-  rejectBooking: rejectBooking(dependencies),
 });

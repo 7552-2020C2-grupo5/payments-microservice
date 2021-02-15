@@ -1,6 +1,7 @@
 const createIdentity = require('./handlers/createIdentityHandler');
 const createRoom = require('./handlers/createRoomHandler');
 const getBalance = require('./handlers/getBalanceHandler');
+const createIntentBook = require('./handlers/createIntentBookHandler');
 
 function postIdentityRoute({ services, config }) {
   return {
@@ -29,8 +30,18 @@ function getBalanceRoute({ services, config }) {
   };
 }
 
+function createIntentBookRoute({ services, config }) {
+  return {
+    method: 'POST',
+    url: '/bookings',
+    schema: createIntentBook.schema(config),
+    handler: createIntentBook.handler({ config, ...services }),
+  };
+}
+
 module.exports = [
   postIdentityRoute,
   createRoomRoute,
-  getBalanceRoute
+  getBalanceRoute,
+  createIntentBookRoute
 ];
