@@ -22,8 +22,8 @@ function createRoomRoute({ services, config }) {
 
 function getBalanceRoute({ services, config }) {
   return {
-    method: 'POST',
-    url: '/balance',
+    method: 'GET',
+    url: '/balance/:address',
     schema: getBalance.schema(config),
     handler: getBalance.handler({ config, ...services }),
   };

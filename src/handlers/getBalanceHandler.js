@@ -14,7 +14,7 @@ function schema(config) {
 
 function handler({ contractInteraction, identityService }) {
   return async function (req) {
-    res = await identityService.getBalance(req.body.address);
+    res = await identityService.getBalance(req.params.address);
     return {"eth" : identityService.weiToEth(res)};
   };
 }
