@@ -32,8 +32,8 @@ function handler({ contractInteraction, identityService }) {
     let fin = req.body.finalDate.split('-');
 
 
-    const initialDate = new Date(ini[2], ini[1], ini[0]);
-    const finalDate = new Date(fin[2], fin[1], fin[0]);
+    const initialDate = new Date(ini[0], ini[1] - 1, ini[2]);
+    const finalDate = new Date(fin[0], fin[1] - 1, fin[2]);
 
     return contractInteraction.createIntentBook(
       identity,

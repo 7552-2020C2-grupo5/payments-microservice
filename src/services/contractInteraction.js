@@ -75,10 +75,10 @@ const createIntentBook = ({ config }) => async (web3, blockchainId, price, initi
     bookbnbContract['methods'].intentBookingBatch(
       roomId,
       initialDate.getDate(),
-      initialDate.getMonth(),
+      initialDate.getMonth() + 1,
       initialDate.getFullYear(),
       finalDate.getDate(),
-      finalDate.getMonth(),
+      finalDate.getMonth() + 1,
       finalDate.getFullYear()
     )
     .send({
