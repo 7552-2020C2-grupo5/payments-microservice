@@ -68,7 +68,7 @@ const createIntentBook = ({ config }) => async (web3, blockchainId, price, initi
   const bookBnb = await getContract(web3, config.contractAddress);
   const wallet = await web3.eth.getAccounts();
 
-  const totalDays = totalDaysBetween(initialDate, finalDate) + 1;
+  const totalDays = totalDaysBetween(initialDate, finalDate);
   const totalPrice = price * totalDays;
 
   return new Promise((resolve, reject) => {
