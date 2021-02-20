@@ -87,6 +87,31 @@ const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate
     .on('transactionHash', (hash) => {
       return resolve({"transaction_hash" : hash});
     })
+    .on('receipt', (r) => {
+      if (r.events.BookIntentCreated) {
+          axios.
+            get(BOOKINGS_ENDPOINT, {
+              params: {
+                blockchain_transaction_hash: r.transactionHash
+              }
+            })
+            .then(function (response) {
+              const id = response.data[0].id;
+              axios.
+                patch(BOOKINGS_ENDPOINT + '/' + id.toString(), {
+                  blockchain_status: "PENDING"
+                })
+                .catch(function (error) {
+                  console.log(error);
+                })
+
+            })
+            .catch(function (error) {
+              console.log(error);
+            })
+
+      }
+    })
     .on('error', (err) => reject(err));
   });
 };
@@ -117,8 +142,6 @@ const acceptBooking = ({ config }) => async (web3, bookerAddress, roomId, initia
           axios.
             patch(BOOKINGS_ENDPOINT + '/' + bookingId.toString(), {
               blockchain_status: "CONFIRMED",
-              blockchain_transaction_hash: "esto no deberia ir",  // todo: arreglar el patch de reservas
-              blockchain_id: 0
             })
             .catch(function (error) {
               console.log(error);
