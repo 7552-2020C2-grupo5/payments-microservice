@@ -3,6 +3,7 @@ const BookBnBAbi = require('../../abi/BnBooking').abi;
 const axios = require('axios');
 
 const PUBLICATIONS_ENDPOINT = "https://bookbnb5-publications.herokuapp.com/v1/publications";
+const BOOKINGS_ENDPOINT = "https://bookbnb5-bookings.herokuapp.com/v1/bookings";
 
 
 const getContract = (web3, address) => {
@@ -23,8 +24,6 @@ const createRoom = ({ config }) => async (web3, price) => {
       .createRoom(toWei(price))
       .send({ from: accounts[0] })
       .on('receipt', (r) => {
-
-        //sleep(18000) // wait enough time until room is created on publications microservice
 
         if (r.events.RoomCreated) {
           const { roomId } = r.events.RoomCreated.returnValues;
@@ -64,8 +63,8 @@ const totalDaysBetween = (initialDate, finalDate) => {
   return Math.ceil(totalTime / 86400000) + 1;
 }
 
-const createIntentBook = ({ config }) => async (web3, blockchainId, price, initialDate, finalDate) => {
-  const bookBnb = await getContract(web3, config.contractAddress);
+const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate, finalDate) => {
+  const bookbnbContract = await getContract(web3, config.contractAddress);
   const wallet = await web3.eth.getAccounts();
 
   const totalDays = totalDaysBetween(initialDate, finalDate);
@@ -86,10 +85,32 @@ const createIntentBook = ({ config }) => async (web3, blockchainId, price, initi
       value: toWei(totalPrice)
     })
     .on('transactionHash', (hash) => {
-      //todo
+      return resolve({"transaction_hash" : hash});
     })
     .on('receipt', (r) => {
-      //todo
+      if (r.events.BookIntentCreated) {
+          axios.
+            get(BOOKINGS_ENDPOINT, {
+              params: {
+                blockchain_transaction_hash: r.transactionHash
+              }
+            })
+            .then(function (response) {
+              const id = response.data[0].id;
+              axios.
+                patch(BOOKINGS_ENDPOINT + '/' + id.toString(), {
+                  blockchain_status: "CONFIRMED"
+                })
+                .catch(function (error) {
+                  console.log(error);
+                })
+
+            })
+            .catch(function (error) {
+              console.log(error);
+            })
+        
+      }
     })
     .on('error', (err) => reject(err));
   });

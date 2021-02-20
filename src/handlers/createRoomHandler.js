@@ -11,7 +11,7 @@ function schema(config) {
         },
       },
     },
-    required: ['mnemonic', 'price', 'address'],
+    required: ['mnemonic', 'price'],
   };
 }
 
