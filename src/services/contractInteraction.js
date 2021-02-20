@@ -87,24 +87,38 @@ const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate
     .on('transactionHash', (hash) => {
       return resolve({"transaction_hash" : hash});
     })
-    .on('receipt', (r) => {
-      if (r.events.BookIntentCreated) {
-          axios.
-            get(BOOKINGS_ENDPOINT, {
-              params: {
-                blockchain_transaction_hash: r.transactionHash
-              }
-            })
-            .then(function (response) {
-              const id = response.data[0].id;
-              axios.
-                patch(BOOKINGS_ENDPOINT + '/' + id.toString(), {
-                  blockchain_status: "CONFIRMED"
-                })
-                .catch(function (error) {
-                  console.log(error);
-                })
+    .on('error', (err) => reject(err));
+  });
+};
 
+const acceptBooking = ({ config }) => async (web3, bookerAddress, roomId, initialDate, finalDate, bookingId) => {
+  const bookbnbContract = await getContract(web3, config.contractAddress);
+  const wallet = await web3.eth.getAccounts();
+
+  return new Promise((resolve, reject) => {
+    bookbnbContract['methods'].acceptBatch(
+      roomId,
+      bookerAddress,
+      initialDate.getDate(),
+      initialDate.getMonth() + 1,
+      initialDate.getFullYear(),
+      finalDate.getDate(),
+      finalDate.getMonth() + 1,
+      finalDate.getFullYear()
+    )
+    .send({
+      from: wallet[0]
+    })
+    .on('transactionHash', (hash) => {
+      return resolve({"transaction_hash" : hash});
+    })
+    .on('receipt', (r) => {
+      if (r.events.RoomBooked) {
+          axios.
+            patch(BOOKINGS_ENDPOINT + '/' + bookingId.toString(), {
+              blockchain_status: "CONFIRMED",
+              blockchain_transaction_hash: "esto no deberia ir",  // todo: arreglar el patch de reservas
+              blockchain_id: 0
             })
             .catch(function (error) {
               console.log(error);
@@ -120,4 +134,5 @@ const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate
 module.exports = (dependencies) => ({
   createRoom: createRoom(dependencies),
   createIntentBook: createIntentBook(dependencies),
+  acceptBooking: acceptBooking(dependencies)
 });
