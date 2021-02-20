@@ -38,7 +38,7 @@ function handler({ contractInteraction, identityService }) {
     const initialDate = new Date(ini[0], ini[1] - 1, ini[2]);
     const finalDate = new Date(fin[0], fin[1] - 1, fin[2]);
 
-    return contractInteraction.createIntentBook(
+    return contractInteraction.acceptBooking(
       identity,
       req.body.bookerAddress,
       req.body.blockchainId,
