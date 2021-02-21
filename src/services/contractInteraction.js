@@ -92,7 +92,8 @@ const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate
           axios.
             get(BOOKINGS_ENDPOINT, {
               params: {
-                blockchain_transaction_hash: r.transactionHash
+                blockchain_transaction_hash: r.transactionHash,
+                blockchain_status: "UNSET"
               }
             })
             .then(function (response) {
