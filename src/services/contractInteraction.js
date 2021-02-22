@@ -100,7 +100,8 @@ const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate
               const id = response.data[0].id;
               axios.
                 patch(BOOKINGS_ENDPOINT + '/' + id.toString(), {
-                  blockchain_status: "CONFIRMED"
+                  blockchain_status: "CONFIRMED",
+                  booking_status: "PENDING"
                 })
                 .catch(function (error) {
                   console.log(error);
