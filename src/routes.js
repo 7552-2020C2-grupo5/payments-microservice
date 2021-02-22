@@ -1,9 +1,10 @@
 const createIdentity = require('./handlers/createIdentityHandler');
 const createRoom = require('./handlers/createRoomHandler');
 const getBalance = require('./handlers/getBalanceHandler');
+const sendTransaction = require('./handlers/sendTransactionHandler');
 const createIntentBook = require('./handlers/createIntentBookHandler');
 const acceptBooking = require('./handlers/acceptBookingHandler');
-const rejectBooking = require('./handlers/rejectBookingHandler')
+const rejectBooking = require('./handlers/rejectBookingHandler');
 
 function postIdentityRoute({ services, config }) {
   return {
@@ -29,6 +30,15 @@ function getBalanceRoute({ services, config }) {
     url: '/balance/:address',
     schema: getBalance.schema(config),
     handler: getBalance.handler({ config, ...services }),
+  };
+}
+
+function sendTransactionRoute({ services, config }) {
+  return {
+    method: 'POST',
+    url: '/balance/:address',
+    schema: sendTransaction.schema(config),
+    handler: sendTransaction.handler({ config, ...services }),
   };
 }
 
@@ -63,6 +73,7 @@ module.exports = [
   postIdentityRoute,
   createRoomRoute,
   getBalanceRoute,
+  sendTransactionRoute,
   createIntentBookRoute,
   acceptBookingRoute,
   rejectBookingRoute
