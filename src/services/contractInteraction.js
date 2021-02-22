@@ -100,7 +100,7 @@ const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate
               const id = response.data[0].id;
               axios.
                 patch(BOOKINGS_ENDPOINT + '/' + id.toString(), {
-                  blockchain_status: "PENDING"
+                  blockchain_status: "CONFIRMED"
                 })
                 .catch(function (error) {
                   console.log(error);
@@ -142,7 +142,45 @@ const acceptBooking = ({ config }) => async (web3, bookerAddress, roomId, initia
       if (r.events.RoomBooked) {
           axios.
             patch(BOOKINGS_ENDPOINT + '/' + bookingId.toString(), {
-              blockchain_status: "CONFIRMED",
+              booking_status: "CONFIRMED",
+            })
+            .catch(function (error) {
+              console.log(error);
+            })
+        
+      }
+    })
+    .on('error', (err) => reject(err));
+  });
+};
+
+
+const rejectBooking = ({ config }) => async (web3, bookerAddress, roomId, initialDate, finalDate, bookingId) => {
+  const bookbnbContract = await getContract(web3, config.contractAddress);
+  const wallet = await web3.eth.getAccounts();
+
+  return new Promise((resolve, reject) => {
+    bookbnbContract['methods'].rejectBatch(
+      roomId,
+      bookerAddress,
+      initialDate.getDate(),
+      initialDate.getMonth() + 1,
+      initialDate.getFullYear(),
+      finalDate.getDate(),
+      finalDate.getMonth() + 1,
+      finalDate.getFullYear()
+    )
+    .send({
+      from: wallet[0]
+    })
+    .on('transactionHash', (hash) => {
+      return resolve({"transaction_hash" : hash});
+    })
+    .on('receipt', (r) => {
+      if (r.events.BookIntentRejected) {
+          axios.
+            patch(BOOKINGS_ENDPOINT + '/' + bookingId.toString(), {
+              booking_status: "REJECTED",
             })
             .catch(function (error) {
               console.log(error);
@@ -158,5 +196,6 @@ const acceptBooking = ({ config }) => async (web3, bookerAddress, roomId, initia
 module.exports = (dependencies) => ({
   createRoom: createRoom(dependencies),
   createIntentBook: createIntentBook(dependencies),
-  acceptBooking: acceptBooking(dependencies)
+  acceptBooking: acceptBooking(dependencies),
+  rejectBooking: rejectBooking(dependencies)
 });
