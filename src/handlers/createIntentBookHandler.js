@@ -17,10 +17,13 @@ function schema(config) {
         },
         finalDate: {
           type: 'string'
+        },
+        bookingId: {
+          type: 'integer'
         }
       },
     },
-    required: ['mnemonic', 'blockchainId', 'price', 'initialDate', 'finalDate'],
+    required: ['mnemonic', 'blockchainId', 'price', 'initialDate', 'finalDate', 'bookingId'],
   };
 }
 
@@ -40,7 +43,8 @@ function handler({ contractInteraction, identityService }) {
       req.body.blockchainId,
       req.body.price,
       initialDate,
-      finalDate
+      finalDate,
+      req.body.bookingId
     );
 
   };

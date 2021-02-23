@@ -63,7 +63,7 @@ const totalDaysBetween = (initialDate, finalDate) => {
   return Math.ceil(totalTime / 86400000) + 1;
 }
 
-const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate, finalDate) => {
+const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate, finalDate, bookingId) => {
   const bookbnbContract = await getContract(web3, config.contractAddress);
   const wallet = await web3.eth.getAccounts();
 
@@ -90,27 +90,12 @@ const createIntentBook = ({ config }) => async (web3, roomId, price, initialDate
     .on('receipt', (r) => {
       if (r.events.BookIntentCreated) {
           axios.
-            get(BOOKINGS_ENDPOINT, {
-              params: {
-                blockchain_transaction_hash: r.transactionHash,
-                blockchain_status: "UNSET"
-              }
-            })
-            .then(function (response) {
-              const id = response.data[0].id;
-              axios.
-                patch(BOOKINGS_ENDPOINT + '/' + id.toString(), {
-                  blockchain_status: "CONFIRMED"
-                })
-                .catch(function (error) {
-                  console.log(error);
-                })
-
+            patch(BOOKINGS_ENDPOINT + '/' + bookingId.toString(), {
+              blockchain_status: "CONFIRMED"
             })
             .catch(function (error) {
               console.log(error);
             })
-
       }
     })
     .on('error', (err) => reject(err));
@@ -142,12 +127,11 @@ const acceptBooking = ({ config }) => async (web3, bookerAddress, roomId, initia
       if (r.events.RoomBooked) {
           axios.
             patch(BOOKINGS_ENDPOINT + '/' + bookingId.toString(), {
-              booking_status: "CONFIRMED",
+              booking_status: "ACCEPTED",
             })
             .catch(function (error) {
               console.log(error);
-            })
-        
+            })      
       }
     })
     .on('error', (err) => reject(err));
