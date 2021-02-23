@@ -9,16 +9,19 @@ function schema(config) {
         price: {
           type: 'number',
         },
+        publicationId: {
+          type: 'integer'
+        }
       },
     },
-    required: ['mnemonic', 'price'],
+    required: ['mnemonic', 'price', 'publicationId'],
   };
 }
 
 function handler({ contractInteraction, identityService }) {
   return async function (req) {
     const identity = await identityService.getWeb3WithIdentity(req.body.mnemonic);
-    return contractInteraction.createRoom(identity, req.body.price);
+    return contractInteraction.createRoom(identity, req.body.price, req.body.publicationId);
   };
 }
 

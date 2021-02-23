@@ -16,7 +16,7 @@ const toWei = (number) => { //Eth to wei
 };
 
 
-const createRoom = ({ config }) => async (web3, price) => {
+const createRoom = ({ config }) => async (web3, price, publicationId) => {
   const accounts = await web3.eth.getAccounts();
   const bookBnb = await getContract(web3, config.contractAddress);
   const hashPromise = new Promise((resolve, reject) => {
@@ -24,26 +24,12 @@ const createRoom = ({ config }) => async (web3, price) => {
       .createRoom(toWei(price))
       .send({ from: accounts[0] })
       .on('receipt', (r) => {
-
         if (r.events.RoomCreated) {
           const { roomId } = r.events.RoomCreated.returnValues;
           axios.
-            get(PUBLICATIONS_ENDPOINT, {
-              params: {
-                blockchain_transaction_hash: r.transactionHash
-              }
-            })
-            .then(function (response) {
-              const id = response.data[0].id;
-              axios.
-                patch(PUBLICATIONS_ENDPOINT + '/' + id.toString(), { 
-                  blockchain_id: parseInt(roomId, 10),
-                  blockchain_status: "CONFIRMED"
-                })
-                .catch(function (error) {
-                  console.log(error);
-                })
-
+            patch(PUBLICATIONS_ENDPOINT + '/' + publicationId.toString(), { 
+              blockchain_id: parseInt(roomId, 10),
+              blockchain_status: "CONFIRMED"
             })
             .catch(function (error) {
               console.log(error);
