@@ -44,6 +44,24 @@ const createRoom = ({ config }) => async (web3, price, publicationId) => {
   return hashPromise;
 };
 
+const changeRoomPrice = ({ config }) => async (web3, newPrice, roomId) => {
+  const accounts = await web3.eth.getAccounts();
+  const bookBnb = await getContract(web3, config.contractAddress);
+  const hashPromise = new Promise((resolve, reject) => {
+    bookBnb.methods
+      .changePrice(
+        roomId,
+        toWei(newPrice)
+      )
+      .send({ from: accounts[0] })
+      .on('transactionHash', function (hash) {
+        return resolve({"transaction_hash" : hash});
+      })
+      .on('error', (err) => reject(err));
+  });
+  return hashPromise;
+};
+
 const totalDaysBetween = (initialDate, finalDate) => {
   const totalTime = finalDate.getTime() - initialDate.getTime();
   return Math.ceil(totalTime / 86400000) + 1;
@@ -167,5 +185,6 @@ module.exports = (dependencies) => ({
   createRoom: createRoom(dependencies),
   createIntentBook: createIntentBook(dependencies),
   acceptBooking: acceptBooking(dependencies),
-  rejectBooking: rejectBooking(dependencies)
+  rejectBooking: rejectBooking(dependencies),
+  changeRoomPrice: changeRoomPrice(dependencies)
 });

@@ -5,6 +5,7 @@ const sendTransaction = require('./handlers/sendTransactionHandler');
 const createIntentBook = require('./handlers/createIntentBookHandler');
 const acceptBooking = require('./handlers/acceptBookingHandler');
 const rejectBooking = require('./handlers/rejectBookingHandler');
+const changeRoomPrice = require('./handlers/changeRoomPriceHandler');
 
 function postIdentityRoute({ services, config }) {
   return {
@@ -21,6 +22,15 @@ function createRoomRoute({ services, config }) {
     url: '/room',
     schema: createRoom.schema(config),
     handler: createRoom.handler({ config, ...services }),
+  };
+}
+
+function changeRoomPriceRoute({ services, config }) {
+  return {
+    method: 'PATCH',
+    url: '/room',
+    schema: changeRoomPrice.schema(config),
+    handler: changeRoomPrice.handler({ config, ...services }),
   };
 }
 
@@ -72,6 +82,7 @@ function rejectBookingRoute({ services, config }) {
 module.exports = [
   postIdentityRoute,
   createRoomRoute,
+  changeRoomPriceRoute,
   getBalanceRoute,
   sendTransactionRoute,
   createIntentBookRoute,

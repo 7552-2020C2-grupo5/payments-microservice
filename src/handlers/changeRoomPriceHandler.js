@@ -6,22 +6,22 @@ function schema(config) {
         mnemonic: {
           type: 'string',
         },
-        price: {
+        newPrice: {
           type: 'number',
         },
-        publicationId: {
+        roomId: {
           type: 'integer'
         }
       },
     },
-    required: ['mnemonic', 'price', 'publicationId'],
+    required: ['mnemonic', 'newPrice', 'roomId'],
   };
 }
 
 function handler({ contractInteraction, identityService }) {
   return async function (req) {
     const identity = await identityService.getWeb3WithIdentity(req.body.mnemonic);
-    return contractInteraction.createRoom(identity, req.body.price, req.body.publicationId);
+    return contractInteraction.changeRoomPrice(identity, req.body.newPrice, req.body.roomId);
   };
 }
 
